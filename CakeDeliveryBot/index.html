@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>Cake Assistant</title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1">
+	<link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+	<link rel="stylesheet" type="text/css" href="dist/jquery.convform.css">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+	<link rel="stylesheet" type="text/css" href="demo.css">
+</head>
+<body>
+	<section id="demo">
+	    <div class="vertical-align">
+	        <div class="container">
+	            <div class="row">
+	                <div class="col-sm-6 col-sm-offset-3 col-xs-offset-0">
+	                    <div class="card no-border">
+	                        <div id="chat" class="conv-form-wrapper">
+	                            <form action="connect.php" method="POST">
+	                                <select data-conv-question="Hello! Welcome to the company! Are you looking to order a cake?" name="first-question">
+	                                    <option value="yes">Yes, I am!</option>
+	                                    <option value="sure">Not Really</option>
+	                                </select>
+	                                <!--<input type="text" name="name" data-conv-question="Alright! First, tell me your full name, please.|Okay! I can sense your taste bud well! "> -->
+	                                <input type="text" name="name" data-conv-question="Howdy, It's a pleasure to meet you." data-no-answer="true">
+	                                <input type="text" data-conv-question="We have lots of cakes." data-no-answer="true">
+	                                <select name="multi[]" data-conv-question="Which cake are you looking for?" multiple>
+	                                    <option value="Classic Cheese">Classic Cheese</option>
+	                                    <option value="Red Velvet">Red Velvet</option>
+	                                    <option value="Pure Chocolate">Pure Chocolate</option>
+	                                    <option value="Mint Lemon">Mint Lemon</option>
+	                                </select>
+	                                <select name="programmer" data-callback="storeState" data-conv-question="Yummm! Look who's drooling. 😋 What size of cake are you looking for?">
+	                                    <option value="Small">Small</option>
+										<option value="Medium">Medium</option>
+										<option value = "Large">Large</option>
+	                                </select>
+	                                <input type="text" data-conv-question="Please answer some questions!!" data-no-answer="true">
+								  <!-- <input data-conv-question="Here it is!" data-no-answer="True"> -->
+								   <input data-conv-question="Type in your e-mail" data-pattern="^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$" id="email" type="email" name="email" required placeholder="What's your e-mail?">
+								   <input data-conv-question="Type in your phone number" data-pattern="^(?:(?:\+?1\s*(?:[.-]\s*)?)?(?:\(\s*([2-9]1[02-9]|[2-9][02-8]1|[2-9][02-8][02-9])\s*\)|([2-9]1[02-9]|[2-9][02-8]1|[2-9][02-8][02-9]))\s*(?:[.-]\s*)?)?([2-9]1[02-9]|[2-9][02-9]1|[2-9][02-9]{2})\s*(?:[.-]\s*)?([0-9]{4})(?:\s*(?:#|x\.?|ext\.?|extension)\s*(\d+))?$" id="phone" type="phone" name="phone" required placeholder="What's your phone number?">
+	                                <select name="callbackTest" data-conv-question="Ok we will be in touch soon! If you have any doubt. Wanna talk to me again!!">
+	                                    <option value="yes" data-callback="rollback">Yes</option>
+	                                    <option value="no" data-callback="restore">No</option>
+	                                </select> 
+	                                <select data-conv-question="Thank You! Hope you enjoy talking to us! Rate us if you like! " id="">
+										<option value="">Awesome!👌</option>
+										<option value="">Satisfied!😊</option>
+										<option value="">Not Satisfied!😟</option>
+									</select> 
+									<input type="text" data-conv-question="Thank you for your suggestion! Bye🙋" data-no-answer="False">
+						            
+	                            </form>
+	                        </div>
+	                    </div>
+	                </div>
+	            </div>
+	        </div>
+	    </div>
+	</section>
+	<script type="text/javascript" src="jquery-1.12.3.min.js"></script>
+	<script type="text/javascript" src="dist/autosize.min.js"></script>
+	<script type="text/javascript" src="dist/jquery.convform.js"></script>
+
+	<script>
+		function google(stateWrapper, ready) {
+			window.open("https://google.com");
+			ready();
+		}
+		function bing(stateWrapper, ready) {
+			window.open("https://bing.com");
+			ready();
+		}
+		var rollbackTo = false;
+		var originalState = false;
+		function storeState(stateWrapper, ready) {
+			rollbackTo = stateWrapper.current;
+			console.log("storeState called: ",rollbackTo);
+			ready();
+		}
+		function rollback(stateWrapper, ready) {
+			console.log("rollback called: ", rollbackTo, originalState);
+			console.log("answers at the time of user input: ", stateWrapper.answers);
+			if(rollbackTo!=false) {
+				if(originalState==false) {
+					originalState = stateWrapper.current.next;
+						console.log('stored original state');
+				}
+				stateWrapper.current.next = rollbackTo;
+				console.log('changed current.next to rollbackTo');
+			}
+			ready();
+		}
+		function restore(stateWrapper, ready) {
+			if(originalState != false) {
+				stateWrapper.current.next = originalState;
+				console.log('changed current.next to originalState');
+			}
+			ready();
+		}
+	</script>
+	<script>
+		jQuery(function($){
+			convForm = $('#chat').convform({selectInputStyle: 'disable'});
+			console.log(convForm);
+		});
+	</script>
+</body>
+</html>
